@@ -57,3 +57,16 @@
     permanent: yes
     state: "{{ firewalld_rule_state }}"
     immediate: yes
+
+- name: "firewalld: Add registry port for quay"
+  ansible.posix.firewalld:
+    zone: public
+    port: "5000/tcp"
+    permanent: yes
+    state: "{{ firewalld_rule_state }}"
+    immediate: yes
+
+- name: "Reload firewalld"
+  ansible.builtin.service:
+    name: firewalld
+    state: reloaded
