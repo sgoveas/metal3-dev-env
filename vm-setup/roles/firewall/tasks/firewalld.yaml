@@ -15,6 +15,39 @@
     - "{{ bare_metal_provisioner_interface }}"
     - "{{ external_interface }}"
 
+- name: List all firewalld zones
+  ansible.posix.firewalld:
+    state: list-all-zones
+  register: firewalld_zones0
+
+- name: Display all firewalld zones
+  debug:
+    var: firewalld_zones0
+
+- ansible.posix.firewalld:
+    zone: libvirt-routed
+    interface: "{{ item }}"
+    permanent: yes
+    state: disabled
+    immediate: yes
+  loop:
+    - "{{ provisioning_interface }}"
+    - "{{ bare_metal_provisioner_interface }}"
+    - "{{ external_interface }}"
+  ignore_errors: yes
+
+- ansible.posix.firewalld:
+    zone: libvirt
+    interface: "{{ item }}"
+    permanent: yes
+    state: "{{ firewalld_rule_state }}"
+    immediate: yes
+  loop:
+    - "{{ provisioning_interface }}"
+    - "{{ bare_metal_provisioner_interface }}"
+    - "{{ external_interface }}"
+  ignore_errors: yes
+
 - name: "firewalld: Provisioning host ports"
   ansible.posix.firewalld:
     zone: libvirt
@@ -65,6 +98,15 @@
     permanent: yes
     state: "{{ firewalld_rule_state }}"
     immediate: yes
+
+- name: List all firewalld zones
+  ansible.posix.firewalld:
+    state: list-all-zones
+  register: firewalld_zones
+
+- name: Display all firewalld zones
+  debug:
+    var: firewalld_zones
 
 - name: "Reload firewalld"
   ansible.builtin.service:
