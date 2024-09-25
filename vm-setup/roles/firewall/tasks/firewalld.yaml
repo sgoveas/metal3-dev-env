@@ -16,13 +16,12 @@
     - "{{ external_interface }}"
 
 - name: List all firewalld zones
-  ansible.posix.firewalld:
-    state: list-all-zones
-  register: firewalld_zones0
+  command: firewall-cmd --list-all-zones
+  register: firewalld_zoness
 
 - name: Display all firewalld zones
   debug:
-    var: firewalld_zones0
+    var: firewalld_zoness
 
 - ansible.posix.firewalld:
     zone: libvirt-routed
@@ -100,8 +99,7 @@
     immediate: yes
 
 - name: List all firewalld zones
-  ansible.posix.firewalld:
-    state: list-all-zones
+  command: firewall-cmd --list-all-zones
   register: firewalld_zones
 
 - name: Display all firewalld zones
